@@ -1,0 +1,31 @@
+﻿<Window x:Class="ClientTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClientTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <DataGrid></DataGrid>
+        <Button Click="ConnectSocketServer" HorizontalAlignment="Stretch" Margin="25,25,25,25" Content="Connect" />
+
+        <TextBlock x:Name="Cosole" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="25,25,25,25" ></TextBlock>
+
+        <Button Click="SendServer" Margin="25,25,25,25" Grid.Row="1" >Send</Button>
+        <Button Click="ConnectSocketLocalServer" Margin="25,25,25,25" Content="ConnectLocal" Grid.Row="2" />
+        <Button Click="DisConnect" Margin="25,25,25,25" Grid.Row="1" Grid.Column="1" >Send</Button>
+
+    </Grid>
+</Window>
