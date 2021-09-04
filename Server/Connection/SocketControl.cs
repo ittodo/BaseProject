@@ -14,25 +14,25 @@ namespace Socket.Connection
     {
         public bool IsUsed { get; set; }
 
-        public SocketAsyncEventArgs AsyncEvent { get; set; }
-
-        Memory.PacketStream Stream;
-
         public Data.SocketAdapter SocketAdapter;
+                
+        private System.Net.Sockets.Socket socket { get; set; }
 
-        int remain = 0;
+        private SocketAsyncEventArgs asyncEvent { get; set; }
 
-        System.Net.Sockets.Socket socket { get; set; }
-        Process.Recive reciveProcess { get; set; }
+        private int remain = 0;
+
+        private Memory.PacketStream stream;
+
+        private Process.Recive reciveProcess { get; set; }
 
         private IConnect connect;
 
         public SocketControl()
         {
-            AsyncEvent = new SocketAsyncEventArgs();
+            asyncEvent = new SocketAsyncEventArgs();
             var handle = new EventHandler<SocketAsyncEventArgs>(io_Completed);
-            AsyncEvent.Completed += handle;
-
+            asyncEvent.Completed += handle;
         }
 
         ~SocketControl()
@@ -43,26 +43,25 @@ namespace Socket.Connection
         {
             Console.WriteLine("Connect " + socket.RemoteEndPoint);
 
-
             this.connect = connect;
 
-            SocketAdapter = new Data.SocketAdapter(this);
+            this.SocketAdapter = new Data.SocketAdapter(this);
 
-            SocketAdapter.Socket = socket;
+            this.SocketAdapter.Socket = socket;
 
-            AsyncEvent.UserToken = SocketAdapter;
+            this.asyncEvent.UserToken = this.SocketAdapter;
 
-            Stream = Pool.Static.Create<Memory.PacketStream>();
+            this.stream = Pool.Static.Create<Memory.PacketStream>();
 
-            AsyncEvent.SetBuffer(Stream.GetRecivePacketMemory());
+            this.asyncEvent.SetBuffer(stream.GetRecivePacketMemory());
 
             this.socket = socket;
 
             this.reciveProcess = reciveProcess;
 
-            AsyncRecive(AsyncEvent);
+            this.connect.AddSocketControl(this);
 
-            connect.AddSocketControl(this);
+            AsyncRecive(this.asyncEvent);
         }
 
         public void InitInstance()
@@ -72,20 +71,19 @@ namespace Socket.Connection
 
         public void Clear()
         {
-            if (Stream != null)
+            if (stream != null)
             {
-                Pool.Static.Remove(Stream);
-                Stream = null;
+                Pool.Static.Remove(stream);
+                stream = null;
             }
-
         }
 
         public void Use()
         {
-            if (Stream != null)
+            if (stream != null)
             {
-                Pool.Static.Remove(Stream);
-                Stream = null;
+                Pool.Static.Remove(stream);
+                stream = null;
             }
         }
 
@@ -123,11 +121,16 @@ namespace Socket.Connection
 
         public void AsyncRecive(SocketAsyncEventArgs e)
         {
-            bool willRaiseEvent = socket.ReceiveAsync(AsyncEvent);
+            bool willRaiseEvent = socket.ReceiveAsync(asyncEvent);
             if (!willRaiseEvent)
             {
                 Received(e);
             }
+        }
+
+        public void Send(Data.PacketWriter sender)
+        {
+            socket.SendAsync(sender.eventArgs);
         }
 
         public void Received(SocketAsyncEventArgs e)
@@ -135,7 +138,7 @@ namespace Socket.Connection
             Data.SocketAdapter token = (Data.SocketAdapter)e.UserToken;
             if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
             {
-                var memory = Stream.GetRecivePacketMemory(remain);
+                var memory = stream.GetRecivePacketMemory(remain);
 
                 int startPosition = 0;
 
@@ -146,8 +149,8 @@ namespace Socket.Connection
                     var m = memory.Slice(startPosition);
                     if (m.Length < 4)
                     {
-                        Stream.Position = 1024 - m.Length;
-                        Stream.Write(m.Span);
+                        stream.Position = 1024 - m.Length;
+                        stream.Write(m.Span);
                         remain = m.Length;
                         break;
                     }
@@ -160,8 +163,8 @@ namespace Socket.Connection
 
                     if ((PacketSize.Value + 4) > m.Length)
                     {
-                        Stream.Position = 1024 - m.Length;
-                        Stream.Write(m.Span);
+                        stream.Position = 1024 - m.Length;
+                        stream.Write(m.Span);
                         remain = m.Length;
                         //remain = (int)PacketSize.Value + 4 - m.Length;
                         break;

@@ -7,8 +7,6 @@ using System.Threading;
 
 namespace Socket.Connection.Data
 {
-    
-
     public class SocketAdapter
     {
         private bool _disConnectSocket;
@@ -32,7 +30,7 @@ namespace Socket.Connection.Data
 
         private bool IsDisconnect { get; set; }
 
-        private SocketControl control;
+        SocketControl Control;
 
         internal System.Net.Sockets.Socket Socket { get; set; }
 
@@ -52,9 +50,9 @@ namespace Socket.Connection.Data
 
         internal SocketAdapter(SocketControl obj )
         {
-            Pool.Static.CreateOrAddPool<PacketSender>();
+            Pool.Static.CreateOrAddPool<PacketWriter>();
             packet = new System.Collections.Concurrent.ConcurrentQueue<(uint, Process.IDeserializeData)>();
-            this.control = obj;
+            this.Control = obj;
             IsDisconnect = false;
         }
 
@@ -66,9 +64,13 @@ namespace Socket.Connection.Data
         // To Byte and Send
         public void Send(Process.ISerializeData _Send)
         {
-            PacketSender sender = Pool.Static.Create<PacketSender>();
+            PacketWriter sender = Pool.Static.Create<PacketWriter>();
+
             sender.Create(this);
-            sender.Send(_Send);
+
+            sender.Write(_Send);
+
+            Control.Send(sender);
         }
 
         internal void DisconnectSocket()
@@ -92,7 +94,7 @@ namespace Socket.Connection.Data
         private void disConnect()
         {
             IsDisconnect = true;
-            this.control.Release();
+            this.Control.Release();
         }
     }
 }

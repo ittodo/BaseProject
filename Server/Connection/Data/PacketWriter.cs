@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Socket.Connection.Data
 {
-    public class PacketSender : IPoolObject
+    public class PacketWriter : IPoolObject
     {
-        System.Net.Sockets.SocketAsyncEventArgs eventArgs;
+        public System.Net.Sockets.SocketAsyncEventArgs eventArgs;
         Memory.PacketStream st;
 
         SocketAdapter parent;
         
-        public PacketSender()
+        public PacketWriter()
         {
 
         }
@@ -23,38 +23,13 @@ namespace Socket.Connection.Data
             eventArgs.UserToken = adapter;
         }
 
-        public void Send(Process.ISerializeData _Send)
+        public void Write(Process.ISerializeData _Send)
         {
             st = Pool.Static.Create<Memory.PacketStream>();
 
             _Send.Serialize(st);
 
-            //var writer = new Socket.Serialize.Binary(st);
-
-            //int ii = 1;
-            //uint ui = 2;
-            //long l = 3;
-            //ulong ul = 4;
-            //short s = 5;
-            //ushort us = 0;
-            //float f = 0.0f;
-            //double d = 0.0;
-            //string text = "bf\0iek\0";
-            //writer.Write(ii);
-            //writer.Write(ui);
-            //writer.Write(l);
-            //writer.Write(ul);
-            //writer.Write(s);
-            //writer.Write(us);
-            //writer.Write(f);
-            //writer.Write(d);
-            //writer.Write(text);
-            //writer.WriteHeader();
-
             eventArgs.SetBuffer(st.GetSendPacketMemory());
-            parent.Socket.SendAsync(eventArgs);
-
-            
         }
 
         public void io_Completed(object sender, System.Net.Sockets.SocketAsyncEventArgs e)
@@ -77,8 +52,10 @@ namespace Socket.Connection.Data
                     parent.DisconnectSocket();
                     break;
             }
+
             Pool.Static.Remove(st);
             st = null;
+
             Pool.Static.Remove(this);
         }
 
