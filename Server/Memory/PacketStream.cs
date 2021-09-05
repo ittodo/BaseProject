@@ -106,7 +106,7 @@ namespace Socket.Memory
 
         public Memory<byte> GetRecivePacketMemory(int remain)
         {
-            return new System.Memory<byte>(this.buffer, 1024-remain, Const.PacketSize + remain);
+            return new System.Memory<byte>(this.buffer, 1024 - remain, Const.PacketSize + remain);
         }
 
         public Span<byte> GetPacketSpan(int remain)

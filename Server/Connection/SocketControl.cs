@@ -61,7 +61,7 @@ namespace Socket.Connection
 
             this.connect.AddSocketControl(this);
 
-            AsyncRecive(this.asyncEvent);
+            AsyncRecive(/*this.asyncEvent*/);
         }
 
         public void InitInstance()
@@ -89,10 +89,12 @@ namespace Socket.Connection
 
         public void io_Completed(object sender, SocketAsyncEventArgs e)
         {
-            switch (e.LastOperation)
+            System.Diagnostics.Debug.Assert(e == asyncEvent);
+
+            switch (asyncEvent.LastOperation)
             {
                 case SocketAsyncOperation.Receive:
-                    Received(e);
+                    Received(/*asyncEvent*/);
                     break;
                 default:
                     Close(e);
@@ -119,12 +121,12 @@ namespace Socket.Connection
             Memory.Pool.Static.Remove(this);
         }
 
-        public void AsyncRecive(SocketAsyncEventArgs e)
+        public void AsyncRecive(/*SocketAsyncEventArgs e*/)
         {
             bool willRaiseEvent = socket.ReceiveAsync(asyncEvent);
             if (!willRaiseEvent)
             {
-                Received(e);
+                Received(/*asyncEvent*/);
             }
         }
 
@@ -133,10 +135,10 @@ namespace Socket.Connection
             socket.SendAsync(sender.eventArgs);
         }
 
-        public void Received(SocketAsyncEventArgs e)
+        public void Received()
         {
-            Data.SocketAdapter token = (Data.SocketAdapter)e.UserToken;
-            if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
+            Data.SocketAdapter token = (Data.SocketAdapter)asyncEvent.UserToken;
+            if (asyncEvent.BytesTransferred > 0 && asyncEvent.SocketError == SocketError.Success)
             {
                 var memory = stream.GetRecivePacketMemory(remain);
 
@@ -149,6 +151,7 @@ namespace Socket.Connection
                     var m = memory.Slice(startPosition);
                     if (m.Length < 4)
                     {
+                        // remain bytes forward copy
                         stream.Position = 1024 - m.Length;
                         stream.Write(m.Span);
                         remain = m.Length;
@@ -186,9 +189,9 @@ namespace Socket.Connection
 
                     Pool.Static.Remove(st);
 
-                } while (startPosition < (e.BytesTransferred + stackRemain));
+                } while (startPosition < (asyncEvent.BytesTransferred + stackRemain));
                 //token.ProcessPacket(memory);
-                AsyncRecive(e);
+                AsyncRecive(/*e*/);
             }
             else
             {
