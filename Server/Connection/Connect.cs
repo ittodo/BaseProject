@@ -25,9 +25,9 @@ namespace Socket.Connection
         #endregion
 
         public SocketAdapter connect;
-        public Connect(IPEndPoint _LocalEndPoint)
+        public Connect(IPEndPoint localEndPoint)
         {
-            localEndPoint = _LocalEndPoint;
+            this.localEndPoint = localEndPoint;
 
             Recive = new Process.Recive();
             Memory.Pool.Static.CreateOrAddPool<SocketControl>();
@@ -42,35 +42,51 @@ namespace Socket.Connection
 
             listenAsync.RemoteEndPoint = localEndPoint;
 
-            listenAsync.Completed += new EventHandler<SocketAsyncEventArgs>(io_Completed);
+            listenAsync.Completed += new EventHandler<SocketAsyncEventArgs>(ioCompleted);
 
             bool isRaise = listenSocket.ConnectAsync(listenAsync);
             if(!isRaise)
             {
-                ConnectOp(listenAsync);
+                connectOperation(listenAsync);
             }
         }
 
-        private void io_Completed(object sender, SocketAsyncEventArgs e)
+        public void Close()
+        {
+            connect.DisconnectSocket();
+            connect = null;
+        }
+
+        private void ioCompleted(object sender, SocketAsyncEventArgs e)
         {
             switch(e.LastOperation)
             {
                 case SocketAsyncOperation.Connect:
-                    ConnectOp(e);
+                    connectOperation(e);
                     break;
                 default:
+                    Console.WriteLine("ioComplete to {0}",
+                    e.LastOperation);
                     break;
             }
         }
 
-        private void ConnectOp(SocketAsyncEventArgs e)
+        private void connectOperation(SocketAsyncEventArgs e)
         {
             var client = this.listenSocket;
-            Console.WriteLine("Socket connected to {0}",
+            if(e.SocketError== SocketError.Success)
+            {
+                Console.WriteLine("Socket connected to {0}",
                     client.RemoteEndPoint.ToString());
 
-            var accept = Memory.Pool.Static.Create<SocketControl>();
-            accept.Create(this, new Process.Recive(), client);
+                var accept = Memory.Pool.Static.Create<SocketControl>();
+                accept.Create(this, new Process.Recive(), client);
+            }
+            else
+            {
+
+            }
+            
         }
 
         void IConnect.AddSocketControl(SocketControl control)

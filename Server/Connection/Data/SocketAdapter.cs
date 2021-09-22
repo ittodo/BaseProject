@@ -73,10 +73,21 @@ namespace Socket.Connection.Data
             Control.Send(sender);
         }
 
+        public void Send(Memory.PacketStream stream)
+        {
+            PacketWriter sender = Pool.Static.Create<PacketWriter>();
+
+            sender.Create(this);
+
+            sender.Write(stream);
+
+            Control.Send(sender);
+        }
+
         internal void DisconnectSocket()
         {
             _disConnectSocket = true;
-            if (_disConnectLogic == true && IsDisconnect == false)
+            if (_disConnectLogic == false && IsDisconnect == false)
             {
                 disConnect();
             }
@@ -85,7 +96,7 @@ namespace Socket.Connection.Data
         public void DisConnectLogic()
         {
             _disConnectLogic = true;
-            if (_disConnectSocket == true && IsDisconnect == false)
+            if (_disConnectSocket == false && IsDisconnect == false)
             {
                 disConnect();
             }

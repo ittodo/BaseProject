@@ -12,10 +12,14 @@ namespace Socket.Memory
 
         int Position { get; set; }
 
-        void WriteHeader();
-        void Write(Span<byte> value);
+        //void Start();
 
-        Span<byte> ReadHeader();
+        void WriteHeader(int position);
+        void Write(Span<byte> value);
+        Span<byte> GetSpan();
+        
+
+        //Span<byte> ReadHeader();
         Span<byte> Read(int Count);
     }
 }

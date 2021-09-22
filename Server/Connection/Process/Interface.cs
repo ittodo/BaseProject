@@ -6,11 +6,11 @@ namespace Socket.Connection.Process
 {
     public interface IDeserializeData
     {
-        public void Deserialize(Memory.PacketStream ps);
+        void Deserialize(Memory.PacketStream ps);
     }
 
     public interface ISerializeData
     {
-        void Serialize(Memory.PacketStream ps);
+        int Serialize(Memory.PacketStream ps);
     }
 }

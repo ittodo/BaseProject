@@ -31,7 +31,7 @@ namespace Socket.Connection
         public SocketControl()
         {
             asyncEvent = new SocketAsyncEventArgs();
-            var handle = new EventHandler<SocketAsyncEventArgs>(io_Completed);
+            var handle = new EventHandler<SocketAsyncEventArgs>(ioCompleted);
             asyncEvent.Completed += handle;
         }
 
@@ -87,7 +87,7 @@ namespace Socket.Connection
             }
         }
 
-        public void io_Completed(object sender, SocketAsyncEventArgs e)
+        private void ioCompleted(object sender, SocketAsyncEventArgs e)
         {
             System.Diagnostics.Debug.Assert(e == asyncEvent);
 
@@ -111,14 +111,19 @@ namespace Socket.Connection
         {
             try
             {
-                socket.Shutdown(SocketShutdown.Send);
+                socket.Shutdown(SocketShutdown.Both);
             }
-            catch { }
+            catch
+            {
 
-            socket.Close();
+            }
+            finally
+            {
+                socket.Close();
 
-            connect.RemoveSocketControl(this);
-            Memory.Pool.Static.Remove(this);
+                connect.RemoveSocketControl(this);
+                Memory.Pool.Static.Remove(this);
+            }
         }
 
         public void AsyncRecive(/*SocketAsyncEventArgs e*/)
@@ -132,70 +137,124 @@ namespace Socket.Connection
 
         public void Send(Data.PacketWriter sender)
         {
-            socket.SendAsync(sender.eventArgs);
+            sender.eventArgs.Completed += new EventHandler<System.Net.Sockets.SocketAsyncEventArgs>(ioSendCompleted);
+            bool willRaiseEvent = socket.SendAsync(sender.eventArgs);
+            if(!willRaiseEvent)
+            {
+                //sender.eventArgs.Completed(sender, sender.eventArgs);
+                ioSendCompleted(sender , sender.eventArgs);
+            }
         }
+
+        private void ioSendCompleted(object obj, SocketAsyncEventArgs e)
+        {
+            Data.PacketWriter sender = obj as Data.PacketWriter;
+            //System.Diagnostics.Debug.Assert(e == asyncEvent);
+
+            switch (e.LastOperation)
+            {
+                case System.Net.Sockets.SocketAsyncOperation.Send:
+                    {
+                        if (e.SocketError == System.Net.Sockets.SocketError.Success)
+                        {
+                            System.Diagnostics.Trace.WriteLine($"SendPacket {System.Threading.Thread.CurrentThread.ManagedThreadId}");
+                        }
+                        else
+                        {
+                            Close(e);
+                        }
+                    }
+                    break;
+                default:
+                    Close(e);
+                    break;
+            }
+            e.Completed -= new EventHandler<System.Net.Sockets.SocketAsyncEventArgs>(ioSendCompleted);
+            sender.SendComplete();
+            
+        }
+
 
         public void Received()
         {
             Data.SocketAdapter token = (Data.SocketAdapter)asyncEvent.UserToken;
             if (asyncEvent.BytesTransferred > 0 && asyncEvent.SocketError == SocketError.Success)
             {
+
+                System.Diagnostics.Trace.WriteLine($"Received {asyncEvent.BytesTransferred} {remain}: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
                 var memory = stream.GetRecivePacketMemory(remain);
+                stream.Remain = remain;
+                stream.Position = 0;
+                stream.ByteTransferred = asyncEvent.BytesTransferred;
 
-                int startPosition = 0;
+                int cal = stream.ByteTransferred + stream.Remain;
 
-                int stackRemain = remain;
+                //int startPosition = 0;
+                //int stackRemain = remain;
 
                 do
                 {
-                    var m = memory.Slice(startPosition);
-                    if (m.Length < 4)
+                    var PacketSize = stream.ReadHeader();
+                    if (PacketSize.IsRead == false)
                     {
+                        var RemainBytes = stream.GetPacketSpan();
                         // remain bytes forward copy
-                        stream.Position = 1024 - m.Length;
-                        stream.Write(m.Span);
-                        remain = m.Length;
+                        stream.Position = 1024 - RemainBytes.Length;
+                        stream.Write(RemainBytes);
+                        stream.Remain = RemainBytes.Length;
+                        remain = RemainBytes.Length;
                         break;
                     }
 
-                    var st = Pool.Static.Create<Memory.PacketStream>();
-                    st.SetMemory(m);
-
-                    var bi = new Socket.Serialize.Binary(st);
-                    var PacketSize = bi.ReadHeader();
-
-                    if ((PacketSize.Value + 4) > m.Length)
+                    //var st = Pool.Static.Create<Memory.PacketStream>();
+                    //st.SetMemory(m);
+                    if ((PacketSize.Value) > stream.RemainBytes)
                     {
-                        stream.Position = 1024 - m.Length;
-                        stream.Write(m.Span);
-                        remain = m.Length;
-                        //remain = (int)PacketSize.Value + 4 - m.Length;
+                        var RemainBytes = stream.GetPacketSpan();
+                        stream.Position = 1024 - RemainBytes.Length;
+                        stream.Write(RemainBytes);
+                        stream.Remain = RemainBytes.Length;
+                        remain = RemainBytes.Length;
                         break;
                     }
-                    var thisPacket = m.Slice(0, (int)PacketSize.Value);
-                    var handleId = reciveProcess.HeaderMaker(thisPacket);
 
-                    Process.Recive._HandleControlMaker processMaker;
-                    reciveProcess.ControlMaker.TryGetValue(handleId, out processMaker);
-                    var data = processMaker(thisPacket);
-                    SocketAdapter.AddProcessData(handleId, data);
+                    cal -= 4;
+                    var bi = new Socket.Serialize.Binary(stream.Read( (int)PacketSize.Value) );
+                    cal -= (int)PacketSize.Value;
+                    remain = 0;
 
-                    //var rww = bi.ReadString();
+                    // Bi Read Packet
 
-                    startPosition = startPosition + (int)PacketSize.Value;
+
+                    //var thisPacket = m.Slice(0, (int)PacketSize.Value);
+                    //var handleId = reciveProcess.HeaderMaker(thisPacket);
+
+                    //Process.Recive._HandleControlMaker processMaker;
+                    //reciveProcess.ControlMaker.TryGetValue(handleId, out processMaker);
+                    //var data = processMaker(thisPacket);
+                    //SocketAdapter.AddProcessData(handleId, data);
+
+                    ////var rww = bi.ReadString();
+
+                    //startPosition = startPosition + (int)PacketSize.Value;
 
                     //Console.WriteLine(startPosition+" : " + PacketSize.ToString() + " : " + e.BytesTransferred.ToString() +" : " + rww.ToString() + " : " + startPosition.ToString());
                     //remain = 0;
 
-                    Pool.Static.Remove(st);
+                    if(cal < 0)
+                    {
+                        break;
+                    }
 
-                } while (startPosition < (asyncEvent.BytesTransferred + stackRemain));
+                } while (cal != 0);
                 //token.ProcessPacket(memory);
                 AsyncRecive(/*e*/);
             }
             else
             {
                 this.SocketAdapter.DisconnectSocket();
+
+
             }
         }
 

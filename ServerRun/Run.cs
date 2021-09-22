@@ -31,7 +31,7 @@ namespace ServerRun
             {
                 var st = Socket.Memory.Pool.Static.Create<Socket.Memory.PacketStream>();
                 st.SetMemory(T);
-                var reader = new Socket.Serialize.Binary(st);
+                var reader = new Socket.Serialize.Binary(st.GetPacketSpan());
                 var rtvalue = reader.ReadUInt();
                 return rtvalue.Value;
             });

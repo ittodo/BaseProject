@@ -13,24 +13,25 @@ namespace Socket.Connection
     {
         public delegate void ConnectionRecivePacketHandler(Data.SocketAdapter _Connect);
 
-        IPEndPoint localEndPoint;
-
-        System.Net.Sockets.Socket listenSocket;
-
-        SocketAsyncEventArgs listenAsync;
-
         public Process.Recive Recive { get; set; }
+
+
+        private IPEndPoint localEndPoint;
+
+        private System.Net.Sockets.Socket listenSocket;
+
+        private SocketAsyncEventArgs listenAsync;
 
         public readonly int MaxUserCount;
 
         public ConcurrentQueue<SocketAdapter> Connection;
 
 
-        public Listen(IPEndPoint _LocalEndPoint , int MaxUserCount = 1000)
+        public Listen(IPEndPoint LocalEndPoint , int MaxUserCount = 1000)
         {
             this.MaxUserCount = MaxUserCount;
 
-            localEndPoint = _LocalEndPoint;
+            localEndPoint = LocalEndPoint;
 
             Memory.Pool.Static.CreateOrAddPool<SocketControl>(this.MaxUserCount);
 
@@ -51,9 +52,9 @@ namespace Socket.Connection
             // Listen socket
             listenAsync = new SocketAsyncEventArgs();
 
-            listenAsync.Completed += new EventHandler<SocketAsyncEventArgs>(Accept_Completed);
+            listenAsync.Completed += new EventHandler<SocketAsyncEventArgs>(acceptCompleted);
 
-            Accept();
+            accept();
         }
 
         public void Close()
@@ -66,22 +67,22 @@ namespace Socket.Connection
             }
         }
 
-        private void Accept()
+        private void accept()
         {
             listenAsync.AcceptSocket = null;
             bool willRaiseEvent = listenSocket.AcceptAsync(listenAsync);
             if (!willRaiseEvent)
             {
-                ProcessAccept(listenAsync);
+                processAccept(listenAsync);
             }
         }
 
-        private void Accept_Completed(object sender, SocketAsyncEventArgs e)
+        private void acceptCompleted(object sender, SocketAsyncEventArgs e)
         {
-            ProcessAccept(e);
+            processAccept(e);
         }
 
-        private void ProcessAccept(SocketAsyncEventArgs e)
+        private void processAccept(SocketAsyncEventArgs e)
         {
             if(e.SocketError == SocketError.Success)
             {
@@ -89,12 +90,7 @@ namespace Socket.Connection
 
                 connect.Create(this, Recive, e.AcceptSocket);
 
-                Accept();
-            }
-            else
-            {
-                int i = 0;
-                i++;
+                accept();
             }
         }
 

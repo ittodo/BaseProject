@@ -27,12 +27,28 @@ namespace Socket.Connection.Data
         {
             st = Pool.Static.Create<Memory.PacketStream>();
 
-            _Send.Serialize(st);
+            var packetSize = _Send.Serialize(st);
+
+            st.WriteHeader(packetSize);
 
             eventArgs.SetBuffer(st.GetSendPacketMemory());
         }
 
-        public void io_Completed(object sender, System.Net.Sockets.SocketAsyncEventArgs e)
+        public void Write(Memory.PacketStream stream)
+        {
+            st = stream;
+
+            eventArgs.SetBuffer(st.GetSendPacketMemory());
+        }
+
+        public void WriteZeroByte()
+        {
+            st = Pool.Static.Create<Memory.PacketStream>();
+            st.Position = 0;
+            eventArgs.SetBuffer(st.GetSendPacketMemory());
+        }
+
+        public void ioCompleted(object sender, System.Net.Sockets.SocketAsyncEventArgs e)
         {
             switch (e.LastOperation)
             {
@@ -53,6 +69,11 @@ namespace Socket.Connection.Data
                     break;
             }
 
+        }
+
+        public void SendComplete()
+        {
+
             Pool.Static.Remove(st);
             st = null;
 
@@ -69,7 +90,7 @@ namespace Socket.Connection.Data
         public void InitInstance()
         {
             this.eventArgs = new System.Net.Sockets.SocketAsyncEventArgs();
-            this.eventArgs.Completed += new EventHandler<System.Net.Sockets.SocketAsyncEventArgs>(io_Completed);
+            //this.eventArgs.Completed += new EventHandler<System.Net.Sockets.SocketAsyncEventArgs>(ioCompleted);
         }
 
         public void Use()

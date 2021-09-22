@@ -15,6 +15,8 @@ namespace Socket.Memory
         }
         ConcurrentDictionary<int, ConcurrentQueue<object>> unUsedMemory = new ConcurrentDictionary<int, ConcurrentQueue<object>>();
 
+        ConcurrentDictionary<int, ConcurrentQueue<object>> usedMemory= new ConcurrentDictionary<int, ConcurrentQueue<object>>();
+
         public void CreateOrAddPool<T>(int Count = 0) where T : class, IPoolObject, new()
         {
             var hashcode = typeof(T).GetHashCode();
@@ -24,8 +26,13 @@ namespace Socket.Memory
             for(int i = 0; i <Count; i++)
             {
                 var newItem = new T();
+                newItem.InitInstance();
                 queue.Enqueue(newItem);
             }
+
+            queue = null;
+            queue = usedMemory.GetOrAdd(hashcode, (x) => { return new ConcurrentQueue<object>(); });
+
         }
 
         public T Create<T>() where T : class, IPoolObject, new()
@@ -36,17 +43,20 @@ namespace Socket.Memory
             if (value != null)
             {
                 object item = null;
+                
                 value.TryDequeue(out item);
                 if (item == null)
                 {
                     var newItem = new T();
                     newItem.InitInstance();
-                    newItem.IsUsed = true;
-                    newItem.Use();
                     
                     item = newItem;
                     //Console.WriteLine("Create");
                 }
+
+                T titem = item as T;
+                titem.IsUsed = true;
+                titem.Use();
                 return item as T;
             }
             return null;
@@ -63,7 +73,7 @@ namespace Socket.Memory
             removeItem.Clear();
             object obj = removeItem as object;
             
-            var hashcode = removeItem.GetHashCode();
+            var hashcode = removeItem.GetType().GetHashCode();
             
 
             ConcurrentQueue<object> value = null;

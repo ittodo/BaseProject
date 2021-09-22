@@ -19,11 +19,11 @@ namespace Packet
             
         }
 
-        public void Serialize(PacketStream ps)
+        public int Serialize(PacketStream ps)
         {
-            var writer = new Socket.Serialize.Binary(ps);
+            var writer = new Socket.Serialize.Binary(ps.GetPacketSpan());
             writer.Write((uint)Type);
-            writer.WriteHeader();
+            return writer.position;
         }
 
 

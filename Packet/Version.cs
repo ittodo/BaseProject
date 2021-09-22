@@ -24,18 +24,18 @@ namespace Packet
 
         public void Deserialize(PacketStream ps)
         {
-            var reader = new Socket.Serialize.Binary(ps);
+            var reader = new Socket.Serialize.Binary(ps.GetPacketSpan());
             reader.ReadUInt();
             var version = reader.ReadString();
             Value = version.Value;
         }
 
-        public void Serialize(PacketStream ps)
+        public int Serialize(PacketStream ps)
         {
-            var writer = new Socket.Serialize.Binary(ps);
+            var writer = new Socket.Serialize.Binary(ps.GetPacketSpan());
             writer.Write((uint)Type);
             writer.Write(Value);
-            writer.WriteHeader();
+            return writer.position;
         }
 
 
