@@ -5,12 +5,13 @@ using System.Text;
 
 namespace Packet
 {
-    public class Version : Socket.Connection.Process.IDeserializeData, Socket.Connection.Process.ISerializeData
+    public class Version : Socket.Connection.Process.IDeserializeData, Socket.Connection.Process.ISerializeData , IPoolObject
     {
         static readonly PacketType Type = PacketType.Version;
 
 
         public string Value;
+
 
         public Version(string version)
         {
@@ -41,14 +42,36 @@ namespace Packet
 
         public static void AddHandle(Socket.Connection.Process.Recive recive)
         {
+            Pool.Static.CreateOrAddPool<Packet.Version>();
+
             recive.ControlMaker.Add((uint)Type, (T) =>
             {
                 var st = Socket.Memory.Pool.Static.Create<Socket.Memory.PacketStream>();
                 st.SetMemory(T);
-                var version = new Packet.Version();
+                var version = Pool.Static.Create<Packet.Version>();
                 version.Deserialize(st);
                 return version;
             });
+        }
+
+        // Pool Interface
+        public bool IsUsed { get; set; }
+
+        public void InitInstance()
+        {
+            this.Value = null;
+        }
+
+        public void Use()
+        {
+            this.Value = null;
+            //throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            this.Value = null;
+            //throw new NotImplementedException();
         }
     }
 }

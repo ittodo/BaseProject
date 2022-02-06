@@ -152,7 +152,7 @@ namespace StaticDataViewModel.ViewModel
                 return;
             }
             
-            var value = new StaticData.Define.Integer(name);
+            var value = new StaticData.Define.I32(name);
             _group.AddChild(value);
             Array.Resize(ref _childs, _childs.Length + 1);
             var valuetype = new ValueType(this, _group, value, _childs.Length - 1);

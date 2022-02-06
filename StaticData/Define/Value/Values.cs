@@ -7,27 +7,26 @@
         SubGroup,
         Array,
         String,
-        Float,
-        Integer,
-        Double,
-
+        F32,
+        I32,
+        F64,
         Reference,
     }
 
-    public class Integer : IValue
+    public class I32 : IValue
     {
         public string Name
         {
             get; set;
         }
-        public EValueType Type { get; set; } = EValueType.Integer;
+        public EValueType Type { get; set; } = EValueType.I32;
 
-        public Integer()
+        public I32()
         {
             Name = "NULL";
         }
 
-        public Integer(string Name)
+        public I32(string Name)
         {
             this.Name = Name;
         }
@@ -52,39 +51,39 @@
         }
     }
 
-    public class Float : IValue
+    public class F32 : IValue
     {
         public string Name
         {
             get; set;
         }
-        public EValueType Type { get; set; } = EValueType.Float;
+        public EValueType Type { get; set; } = EValueType.F32;
 
-        public Float()
+        public F32()
         {
             Name = "NULL";
         }
 
-        public Float(string Name)
+        public F32(string Name)
         {
             this.Name = Name;
         }
     }
 
-    public class Double : IValue
+    public class F64 : IValue
     {
         public string Name
         {
             get; set;
         }
-        public EValueType Type { get; set; } = EValueType.Double;
+        public EValueType Type { get; set; } = EValueType.F64;
 
-        public Double()
+        public F64()
         {
             Name = "NULL";
         }
 
-        public Double(string Name)
+        public F64(string Name)
         {
             this.Name = Name;
         }

@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="T4\Example.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

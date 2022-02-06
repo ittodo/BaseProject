@@ -17,17 +17,17 @@ namespace StaticData.Define
                 case Define.EValueType.Group:
                     value = new Define.Group(name);
                     break;
-                case Define.EValueType.Integer:
-                    value = new Define.Integer(name);
+                case Define.EValueType.I32:
+                    value = new Define.I32(name);
                     break;
                 case Define.EValueType.Reference:
                     value = new Define.Reference(name);
                     break;
-                case Define.EValueType.Double:
-                    value = new Define.Double(name);
+                case Define.EValueType.F64:
+                    value = new Define.F64(name);
                     break;
-                case Define.EValueType.Float:
-                    value = new Define.Float(name);
+                case Define.EValueType.F32:
+                    value = new Define.F32(name);
                     break;
                 case Define.EValueType.String:
                     value = new Define.String(name);

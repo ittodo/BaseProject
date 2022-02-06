@@ -27,7 +27,7 @@ namespace ServerRun
             IPEndPoint localendpoint = new IPEndPoint(ipaddress, 11001);
             userListen = new Socket.Connection.Listen(localendpoint);
 
-            userListen.Recive.HeaderMaker = ((T) =>
+            userListen.Recive.ParseHeader = ((T) =>
             {
                 var st = Socket.Memory.Pool.Static.Create<Socket.Memory.PacketStream>();
                 st.SetMemory(T);

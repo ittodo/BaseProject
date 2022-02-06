@@ -14,8 +14,10 @@ namespace ServerRun.Packet
                 var current = itr.Current;
                 if (current.IsDisconnectSocket == true)
                 {
+                    Data.Static.UserContainer.Remove(current);
                     current.DisConnectLogic();
                     Console.WriteLine("Disconnect");
+                    continue;
                 }
 
                 var item = current.Get();
@@ -25,21 +27,26 @@ namespace ServerRun.Packet
                     {
                         var version = item.Item2 as global::Packet.Version;
                         Console.WriteLine(version.Value);
+                        Socket.Memory.Pool.Static.Remove(version);
                     }
                     else if (item.Item1 == (uint)global::Packet.PacketType.Login)
                     {
                         Console.WriteLine("Login");
+                        var Login = item.Item2 as global::Packet.Login;
+                        Console.WriteLine(Login.Name);
+
+                        var user = Data.Static.UserContainer.Add(current);
+                        user.PoolMember.Login = Login;
                     }
                     else if(item.Item1 == (uint)global::Packet.PacketType.Disconnect)
                     {
-                        Console.WriteLine("Disconnect");
-                        global::ServerRun.Run.CleanUp();
+                        Data.Static.UserContainer.Remove(current);
+                        current.DisConnectLogic();
                     }
                     item = current.Get();
                 }
             }
             System.Threading.Thread.Sleep(10);
-
         }
 
         public static void CleanUp(Socket.Connection.Listen listen)

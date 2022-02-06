@@ -6,7 +6,7 @@ namespace Socket.Connection.Process
 {
     public class Recive
     {
-        public _HandleControlHeader HeaderMaker;
+        public _HandleControlHeader ParseHeader;
         public Dictionary<uint, _HandleControlMaker> ControlMaker;
 
         public delegate uint _HandleControlHeader(Memory<byte> mem);
@@ -14,7 +14,7 @@ namespace Socket.Connection.Process
 
         public Recive()
         {
-            HeaderMaker = null;
+            ParseHeader = null;
             ControlMaker = new Dictionary<uint, _HandleControlMaker>();
         }
     }
