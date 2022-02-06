@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include "cat.h"
 
 #include "templete.h"
 
@@ -31,6 +32,11 @@ public:
 
 int main()
 {
+    auto p = cat("1233", "3323" , __func__ , __FILE__);
+    std::cout << p.c;
+
+    //constexpr auto f_name = type_name<decltype(f)>::get();
+    
     //MyFunc();
     //std::cout <<  CallDummy("w");
     std::cout << "Hello World!\n";
@@ -48,6 +54,8 @@ int main()
     decltype(&TestClass::Open) t = &TestClass::Open;
 
     int i = 0;
+
+    auto pp = cat("1233", "3323", __func__, __FILE__);
     //TestClass2 tt2;
     //desctest::Func(tt2);
     //std::list<float> aaa = { 1.0f,2.0f,3.0f };
