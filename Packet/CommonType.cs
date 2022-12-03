@@ -1,4 +1,4 @@
-﻿using Socket.Memory;
+﻿using Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,14 +13,14 @@ namespace Packet
             this.Type = Type;
         }
 
-        public void Deserialize(PacketStream ps)
+        public void Deserialize(Socket.Serialize.Binary binary)
         {
             
         }
 
         public int Serialize(PacketStream ps)
         {
-            var writer = new Socket.Serialize.Binary(ps.GetPacketSpan());
+            var writer = new Socket.Serialize.Binary(ps.GetSendPacketSpan());
             writer.Write((uint)Type);
             return writer.position;
         }

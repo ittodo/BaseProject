@@ -6,7 +6,7 @@ namespace Socket.Connection.Process
 {
     public interface IDeserializeData
     {
-        void Deserialize(Memory.PacketStream ps);
+        void Deserialize(Socket.Serialize.Binary binary);
     }
 
     public interface ISerializeData

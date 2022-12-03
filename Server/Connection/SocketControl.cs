@@ -1,4 +1,4 @@
-﻿using Socket.Memory;
+﻿using Memory;
 using Socket.Serialize;
 using System;
 using System.Collections.Generic;
@@ -180,8 +180,6 @@ namespace Socket.Connection
             Data.SocketAdapter token = (Data.SocketAdapter)asyncEvent.UserToken;
             if (asyncEvent.BytesTransferred > 0 && asyncEvent.SocketError == SocketError.Success)
             {
-
-                System.Diagnostics.Trace.WriteLine($"Received {asyncEvent.BytesTransferred} {remain}: {System.Threading.Thread.CurrentThread.ManagedThreadId}");
                 var memory = stream.GetRecivePacketMemory(remain);
                 stream.Remain = remain;
                 stream.Position = 0;
@@ -219,18 +217,27 @@ namespace Socket.Connection
                     }
 
                     cal -= 4;
-                    var bi = new Socket.Serialize.Binary(stream.Read( (int)PacketSize.Value) );
+
+                    var span = stream.Read((int)PacketSize.Value);
+                    var bi = new Socket.Serialize.Binary(span);
+
                     cal -= (int)PacketSize.Value;
                     remain = 0;
+
+                    var header = reciveProcess.ParseHeader(bi);
+                    Process.Recive._HandleControlMaker processMaker = null;
+                    reciveProcess.ControlMaker.TryGetValue(header, out processMaker);
+                    if(processMaker!= null)
+                    {
+                        processMaker(bi);
+                    }
 
                     // Bi Read Packet
 
 
-                    //var thisPacket = m.Slice(0, (int)PacketSize.Value);
                     //var handleId = reciveProcess.HeaderMaker(thisPacket);
 
-                    //Process.Recive._HandleControlMaker processMaker;
-                    //reciveProcess.ControlMaker.TryGetValue(handleId, out processMaker);
+
                     //var data = processMaker(thisPacket);
                     //SocketAdapter.AddProcessData(handleId, data);
 
@@ -241,7 +248,7 @@ namespace Socket.Connection
                     //Console.WriteLine(startPosition+" : " + PacketSize.ToString() + " : " + e.BytesTransferred.ToString() +" : " + rww.ToString() + " : " + startPosition.ToString());
                     //remain = 0;
 
-                    if(cal < 0)
+                    if (cal < 0)
                     {
                         break;
                     }

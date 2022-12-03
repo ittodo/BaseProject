@@ -29,9 +29,40 @@ public:
     
 };
 
+template<typename T , typename = int>
+struct Has_Func : std::false_type
+{
+
+};
+
+template<typename T>
+struct Has_Func<T, decltype(std::declval<T>.Func(), 0)> : std::true_type
+{
+
+};
+
+template<typename T>
+constexpr void IfExistCallFunc(T& Inst)
+{
+    if constexpr (Has_Func<T>::value)
+    {
+        Inst.Func();
+    }
+}
+
+
+class A
+{
+
+};
 
 int main()
 {
+
+    A kk;
+    IfExistCallFunc(kk);
+
+
     auto p = cat("1233", "3323" , __func__ , __FILE__);
     std::cout << p.c;
 

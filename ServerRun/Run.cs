@@ -29,9 +29,7 @@ namespace ServerRun
 
             userListen.Recive.ParseHeader = ((T) =>
             {
-                var st = Socket.Memory.Pool.Static.Create<Socket.Memory.PacketStream>();
-                st.SetMemory(T);
-                var reader = new Socket.Serialize.Binary(st.GetPacketSpan());
+                var reader = T;
                 var rtvalue = reader.ReadUInt();
                 return rtvalue.Value;
             });

@@ -30,7 +30,7 @@ namespace SocketServerTest.Client
 
         public void Send()
         {
-            var  stream = Socket.Memory.Pool.Static.Create<Socket.Memory.PacketStream>();
+            var  stream = Memory.Pool.Static.Create<Memory.PacketStream>();
             var bi = new Socket.Serialize.Binary(stream.GetMemory().Span);
             bi.Write(4);
             bi.Write(4);

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Const\Const.csproj" />
+    <ProjectReference Include="..\Memory\Memory.csproj" />
     <ProjectReference Include="..\Packet\Packet.csproj" />
     <ProjectReference Include="..\Performance\Performance.csproj" />
     <ProjectReference Include="..\Server\Socket.csproj" />

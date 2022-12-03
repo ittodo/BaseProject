@@ -1,4 +1,4 @@
-﻿using Socket.Memory;
+﻿using Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;

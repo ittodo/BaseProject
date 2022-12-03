@@ -7,6 +7,6 @@ namespace ServerRun.Data
 {
     public class Static 
     {
-        public static UserContainer UserContainer;
+        public static UserContainer UserContainer = new UserContainer();
     }
 }

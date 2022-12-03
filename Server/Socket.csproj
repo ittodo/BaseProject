@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
@@ -33,7 +33,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Const\Const.cs" />
+    <Compile Remove="Memory\BulkByte.cs" />
+    <Compile Remove="Memory\IPoolObject.cs" />
+    <Compile Remove="Memory\IStream.cs" />
+    <Compile Remove="Memory\PacketStream.cs" />
+    <Compile Remove="Memory\Pool.cs" />
+    <Compile Remove="Memory\PoolAdapter.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Const\" />
+    <Folder Include="Memory\" />
     <Folder Include="Stream\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Const\Const.csproj" />
+    <ProjectReference Include="..\Memory\Memory.csproj" />
   </ItemGroup>
 
 </Project>

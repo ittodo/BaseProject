@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memory;
+using System;
 using System.Net;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
@@ -6,7 +7,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Socket;
-using Socket.Memory;
 using Socket.Serialize;
 
 namespace ServerRun

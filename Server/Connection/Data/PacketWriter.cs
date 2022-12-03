@@ -1,11 +1,13 @@
-﻿using Socket.Memory;
+﻿using global::Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
+
+
 namespace Socket.Connection.Data
 {
-    public class PacketWriter : IPoolObject
+    public class PacketWriter : Memory.IPoolObject
     {
         public System.Net.Sockets.SocketAsyncEventArgs eventArgs;
         Memory.PacketStream st;
@@ -30,6 +32,7 @@ namespace Socket.Connection.Data
             var packetSize = _Send.Serialize(st);
 
             st.WriteHeader(packetSize);
+            st.Position += packetSize;
 
             eventArgs.SetBuffer(st.GetSendPacketMemory());
         }

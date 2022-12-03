@@ -27,7 +27,7 @@ namespace ServerRun.Packet
                     {
                         var version = item.Item2 as global::Packet.Version;
                         Console.WriteLine(version.Value);
-                        Socket.Memory.Pool.Static.Remove(version);
+                        Memory.Pool.Static.Remove(version);
                     }
                     else if (item.Item1 == (uint)global::Packet.PacketType.Login)
                     {

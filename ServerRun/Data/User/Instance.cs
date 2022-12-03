@@ -26,7 +26,7 @@ namespace ServerRun.Data.User
         {
             this.SocketAdapter = null;
 
-            Socket.Memory.Pool.Static.Remove(PoolMember.Login);
+            Memory.Pool.Static.Remove(PoolMember.Login);
         }
     }
 }

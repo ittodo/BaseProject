@@ -1,4 +1,4 @@
-﻿using Socket.Memory;
+﻿using Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,9 +23,9 @@ namespace Packet
             
         }
 
-        public void Deserialize(PacketStream ps)
+        public void Deserialize(Socket.Serialize.Binary binary)
         {
-            var reader = new Socket.Serialize.Binary(ps.GetPacketSpan());
+            var reader = binary;
             reader.ReadUInt();
             var version = reader.ReadString();
             Value = version.Value;
@@ -33,12 +33,11 @@ namespace Packet
 
         public int Serialize(PacketStream ps)
         {
-            var writer = new Socket.Serialize.Binary(ps.GetPacketSpan());
+            var writer = new Socket.Serialize.Binary(ps.GetSendPacketSpan());
             writer.Write((uint)Type);
             writer.Write(Value);
             return writer.position;
         }
-
 
         public static void AddHandle(Socket.Connection.Process.Recive recive)
         {
@@ -46,10 +45,8 @@ namespace Packet
 
             recive.ControlMaker.Add((uint)Type, (T) =>
             {
-                var st = Socket.Memory.Pool.Static.Create<Socket.Memory.PacketStream>();
-                st.SetMemory(T);
                 var version = Pool.Static.Create<Packet.Version>();
-                version.Deserialize(st);
+                version.Deserialize(T);
                 return version;
             });
         }

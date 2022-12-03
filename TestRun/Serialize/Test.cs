@@ -12,7 +12,7 @@ namespace TestRun.Serialize
         public void Execute()
         {
             Socket.Static.Static.CreateInstance();
-            Socket.Memory.PacketStream stream = new Socket.Memory.PacketStream();
+            Memory.PacketStream stream = new Memory.PacketStream();
             int integer = 1;
             uint uinteger = 2;
 
@@ -33,9 +33,9 @@ namespace TestRun.Serialize
             var pair4 = b.ReadInt();
 
 
-            Socket.Memory.BulkByte bulk = new Socket.Memory.BulkByte(16);
+            Memory.BulkByte bulk = new Memory.BulkByte(16);
             Random r = new Random();
-            List<Socket.Memory.BulkByte.Handle> handle = new List<Socket.Memory.BulkByte.Handle>();
+            List<Memory.BulkByte.Handle> handle = new List<Memory.BulkByte.Handle>();
 
             for (int k = 0; k < 20; k++)
             {
