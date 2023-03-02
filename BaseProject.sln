@@ -55,9 +55,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Client", "study\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp1.Shared", "study\BlazorApp1\Shared\BlazorApp1.Shared.csproj", "{BCE6956A-FF03-41D6-B1D5-029C8E7B752E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memory", "Memory\Memory.csproj", "{AFB72755-9B67-4C35-978E-87789355237E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Memory", "Memory\Memory.csproj", "{AFB72755-9B67-4C35-978E-87789355237E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Const", "Const\Const.csproj", "{709F46A1-FF8C-4A39-AA9E-E0A908D534C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Const", "Const\Const.csproj", "{709F46A1-FF8C-4A39-AA9E-E0A908D534C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fe", "Fe\Fe.csproj", "{7EA7F6FC-BEFA-4337-B901-2A792E14811C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeExecuter", "FeExecuter\FeExecuter.csproj", "{586FADD0-7450-4FED-B378-DC6760F8194B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -295,6 +299,30 @@ Global
 		{709F46A1-FF8C-4A39-AA9E-E0A908D534C7}.Release|x64.Build.0 = Release|Any CPU
 		{709F46A1-FF8C-4A39-AA9E-E0A908D534C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{709F46A1-FF8C-4A39-AA9E-E0A908D534C7}.Release|x86.Build.0 = Release|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Debug|x64.Build.0 = Debug|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Debug|x86.Build.0 = Debug|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Release|x64.ActiveCfg = Release|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Release|x64.Build.0 = Release|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Release|x86.ActiveCfg = Release|Any CPU
+		{7EA7F6FC-BEFA-4337-B901-2A792E14811C}.Release|x86.Build.0 = Release|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Debug|x64.Build.0 = Debug|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Debug|x86.Build.0 = Debug|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Release|x64.ActiveCfg = Release|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Release|x64.Build.0 = Release|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Release|x86.ActiveCfg = Release|Any CPU
+		{586FADD0-7450-4FED-B378-DC6760F8194B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

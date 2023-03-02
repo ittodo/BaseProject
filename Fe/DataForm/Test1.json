@@ -1,0 +1,71 @@
+{
+  "Define": [
+    {
+      "Space": "Role.Player",
+      "Name": "Character",
+      "Child": [
+        {
+          "Name": "Index",
+          "Type": "Index",
+          "Default": 0
+        },
+        {
+          "Name": "Key",
+          "Type": "Key"
+        },
+        {
+          "Name": "Name",
+          "Type": "I32"
+        },
+        {
+          "Name": "Class",
+          "Type": "Link",
+          "Target": "Role.Player.Class"
+        },
+        {
+          "Name": "Level",
+          "Type": "Link",
+          "Target": "Role.Player.Level"
+        }
+      ]
+    },
+    {
+      "Space": "Role.Player",
+      "Name": "Level",
+      "Child": [
+        {
+          "Name": "Index",
+          "Type": "Index",
+          "Default": 0
+        },
+        {
+          "Name": "Key",
+          "Type": "Key"
+        },
+        {
+          "Name": "Level",
+          "Type": "I32"
+        },
+        {
+          "Name": "Exp",
+          "Type": "I64"
+        }
+      ]
+    },
+    {
+      "Space": "Role.Player",
+      "Name": "Class",
+      "Child": [
+        {
+          "Name": "Index",
+          "Type": "Index",
+          "Default": 0
+        },
+        {
+          "Name": "Key",
+          "Type": "Key"
+        }
+      ]
+    }
+  ]
+}

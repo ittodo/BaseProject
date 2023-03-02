@@ -1,0 +1,61 @@
+﻿# 스키마 작성 
+# Space : NameSpace
+# Enum 타입
+# 정의 타입 Table , Sub , Enum
+# Data I32 , I64, F32 , F64 , Vector2 , Vector3 , Link
+# Space 파일 단위
+
+- Space : Character
+- Enum : EJob
+  Value : 
+    - Jack
+    - Pepe
+#- !Space
+#  Name : pwe
+
+- Space : Character
+- Sub : Stat
+  Value :
+    - I32 : Speed
+      Min : -100
+      Max : 100
+    - I32 : Attack
+    - I32 : Magic 
+    - I32 : Defence
+    - I32 : MDefence
+    - Vector2 : Position
+      Min : ",0"
+      Max : 0,200
+    
+- Space : Character
+- Table : Player
+  Value :
+    - I32: User
+      Min : -100
+      Max : 100
+    - Link : Job
+      Type : Character.EJob
+    - Link : Level
+      Type : Level
+    - F32 : Position
+      Min : 1.233
+      Max : 23.4
+    - Sub : Stat
+      Value :
+      - I32 : Speed
+        Min : -100
+        Max : 100
+    - Array : Stop
+      Type : Integer
+      Min : 100
+      Max : 100
+- Table : Level
+  Value :
+    - I32 : Index
+    - I32 : Exp
+    - Link : Stat
+      Type : Character.Stat
+    - Link : Job
+      Type : Character.EJob
+    - Link : Normal
+      Type : ESpecial
